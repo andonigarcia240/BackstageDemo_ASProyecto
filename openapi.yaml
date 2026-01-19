@@ -1,0 +1,19 @@
+openapi: 3.0.3
+info:
+  title: Demo API Backstage
+  version: "1.0.0"
+paths:
+  /ping:
+    get:
+      summary: Ping
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok

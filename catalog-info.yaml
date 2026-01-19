@@ -3,7 +3,26 @@ kind: Component
 metadata:
   name: as-proyecto
   description: Servicio principal del proyecto AS_Proyecto
+  annotations:
+    github.com/project-slug: andonigarcia240/AS_Proyecto
+    backstage.io/techdocs-ref: dir:.
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   type: service
   lifecycle: experimental
-  owner: team-platform
+  owner: guest
+  providesApis:
+    - as-proyecto-api
+
+---
+apiVersion: backstage.io/v1alpha1
+kind: API
+metadata:
+  name: as-proyecto-api
+  description: OpenAPI del proyecto AS_Proyecto
+spec:
+  type: openapi
+  lifecycle: experimental
+  owner: guest
+  definition:
+    $text: ./openapi.yaml

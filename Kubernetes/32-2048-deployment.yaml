@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: juego-2048
+  namespace: arcade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: juego-2048
+  template:
+    metadata:
+      labels:
+        app: juego-2048
+    spec:
+      containers:
+        - name: juego-2048
+          image: andonigarcia/arcade-2048:1.0.0
+          ports:
+            - containerPort: 80

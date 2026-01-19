@@ -1,0 +1,91 @@
+services:
+  servidor-bbdd:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME_FILE: /run/secrets/mongo_root_user.txt
+      MONGO_INITDB_ROOT_PASSWORD_FILE: /run/secrets/mongo_root_pwd.txt
+    volumes:
+      - mongo-data:/data/db
+      - ./secrets:/run/secrets:ro
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test:
+        - "CMD-SHELL"
+        - >
+          USR="$(cat /run/secrets/mongo_root_user.txt)";
+          PW="$(cat /run/secrets/mongo_root_pwd.txt)";
+          mongosh --quiet -u "$$USR" -p "$$PW" --authenticationDatabase admin
+          --eval 'db.adminCommand({ping:1}).ok' | grep 1 || exit 1
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  servidor-web:
+    image: andonigarcia/servidor-web:1.0.5
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      MONGO_USER: ${APP_USER}
+      MONGO_PWD: ${APP_PWD}
+      MONGO_DB_GAMES: appdb
+      MONGO_DB_SCORES: scoresdb
+      SCORES_DIV: /home/app/data
+      PORT: 3000
+    depends_on:
+      servidor-bbdd:
+        condition: service_healthy  
+    volumes:
+      - ./data:/home/app/data
+
+  seed-games:
+    image: andonigarcia/seed-games:1.0.5
+    env_file:
+      - .env
+    environment:
+      MONGO_USER: ${APP_USER}
+      MONGO_PWD: ${APP_PWD}
+      MONGO_DB: appdb
+      CSV_PATH: /home/app/data/vgsales.csv
+    depends_on:
+      servidor-bbdd:
+        condition: service_healthy
+    volumes:
+      - ./data/vgsales.csv:/home/app/data/vgsales.csv:ro
+    restart: "no"
+
+  seed-scores:
+    image: andonigarcia/seed-scores:1.0.4
+    env_file:
+      - .env
+    environment:
+      MONGO_USER: ${APP_USER}
+      MONGO_PWD: ${APP_PWD}
+      MONGO_DB: scoresdb
+      CSV_PATH: /home/app/data/scores.csv
+    depends_on:
+      servidor-bbdd:
+        condition: service_healthy
+    volumes:
+      - ./data/scores.csv:/home/app/data/scores.csv:ro
+    restart: "no"
+
+  pacman:
+    image: dbafromthecold/pac-man
+    ports:
+      - 8080:80
+
+  juego-2048:
+    image: andonigarcia/arcade-2048:1.0.0
+    ports:
+      - 8081:80
+
+  tetris:
+    image: andonigarcia/arcade-tetris:1.0.0
+    ports:
+      - 8082:80
+
+volumes:
+  mongo-data:
+

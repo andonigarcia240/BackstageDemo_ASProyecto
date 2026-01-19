@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: pacman
+  namespace: arcade
+spec:
+  type: ClusterIP
+  selector:
+    app: pacman
+  ports:
+    - port: 80
+      targetPort: 80

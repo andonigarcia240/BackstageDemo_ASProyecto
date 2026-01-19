@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servidor-web
+  namespace: arcade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: servidor-web
+  template:
+    metadata:
+      labels:
+        app: servidor-web
+    spec:
+      initContainers:
+        - name: wait-for-mongo
+          image: mongo:latest
+          envFrom:
+            - secretRef:
+                name: mongo-secret
+          command:
+            - /bin/sh
+            - -ec
+            - >
+              until mongosh --quiet \
+                -u "$MONGO_INITDB_ROOT_USERNAME" \
+                -p "$MONGO_INITDB_ROOT_PASSWORD" \
+                --authenticationDatabase admin \
+                --host servidor-bbdd:27017 \
+                --eval 'db.adminCommand({ping:1}).ok' | grep 1;
+              do
+                echo "Esperando a Mongo...";
+                sleep 3;
+              done
+              
+      containers:
+        - name: servidor-web
+          image: andonigarcia/servidor-web:1.0.5  
+          ports:
+            - containerPort: 3000
+          env:
+            - name: MONGO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: APP_USER
+            - name: MONGO_PWD
+              valueFrom:
+                secretKeyRef:
+                  name: mongo-secret
+                  key: APP_PWD
+            - name: PORT
+              value: "3000"
+            - name: SCORES_DIV
+              value: "/home/app/data"
+          volumeMounts:
+            - name: app-data
+              mountPath: /home/app/data
+      volumes:
+        - name: app-data

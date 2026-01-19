@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pacman
+  namespace: arcade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pacman
+  template:
+    metadata:
+      labels:
+        app: pacman
+    spec:
+      containers:
+        - name: pacman
+          image: dbafromthecold/pac-man:latest
+          ports:
+            - containerPort: 80

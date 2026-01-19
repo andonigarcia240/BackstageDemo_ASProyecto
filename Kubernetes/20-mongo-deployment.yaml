@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: servidor-bbdd
+  namespace: arcade
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: servidor-bbdd
+  template:
+    metadata:
+      labels:
+        app: servidor-bbdd
+    spec:
+      containers:
+        - name: mongo
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          envFrom:
+            - secretRef:
+                name: mongo-secret
+          volumeMounts:
+            - name: mongo-data
+              mountPath: /data/db
+            - name: mongo-init
+              mountPath: /docker-entrypoint-initdb.d
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -ec
+                - >
+                  mongosh --quiet -u "$MONGO_INITDB_ROOT_USERNAME" -p "$MONGO_INITDB_ROOT_PASSWORD"
+                  --authenticationDatabase admin --eval 'db.adminCommand({ping:1}).ok' | grep 1
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 20
+      volumes:
+        - name: mongo-data
+          persistentVolumeClaim:
+            claimName: mongo-pvc
+        - name: mongo-init
+          configMap:
+            name: mongo-init-scripts

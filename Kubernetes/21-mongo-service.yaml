@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: servidor-bbdd
+  namespace: arcade
+spec:
+  selector:
+    app: servidor-bbdd
+  ports:
+    - name: mongo
+      port: 27017
+      targetPort: 27017
+  type: ClusterIP

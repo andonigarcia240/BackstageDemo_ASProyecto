@@ -1,0 +1,16 @@
+{
+  "name": "servidor-web",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "mongodb": "^6.9.0",
+    "csv-parse": "^5.5.3",
+    "csv-writer": "^1.6.0",
+    "http-proxy-middleware": "^2.0.6"
+  }
+}

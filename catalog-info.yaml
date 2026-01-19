@@ -1,0 +1,9 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: as-proyecto
+  description: Servicio principal del proyecto AS_Proyecto
+spec:
+  type: service
+  lifecycle: experimental
+  owner: team-platform

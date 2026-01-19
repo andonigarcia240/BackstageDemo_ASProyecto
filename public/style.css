@@ -1,0 +1,91 @@
+:root { --bg:#0b1020; --card:#111833; --muted:#8aa0ff; --text:#e7ecff; --accent:#5b7cff; }
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0b1020,#0a0e1a);color:var(--text);font:16px/1.4 system-ui,Segoe UI,Roboto}
+.wrap{max-width:1100px;margin:40px auto;padding:0 16px}
+.title{font-size:clamp(22px,3vw,32px);margin:0 0 4px}
+.subtitle{margin:0 0 20px;color:#cbd4ffb0}
+
+/* Switcher */
+.switcher{display:flex;gap:10px;margin:10px 0 18px}
+.tab{flex:1;padding:12px 14px;border-radius:12px;border:1px solid #28337a;background:#0d1330;color:var(--text);cursor:pointer;font-weight:700;letter-spacing:.02em}
+.tab.active{background:linear-gradient(180deg,#5b7cff,#4f6be0);border:none}
+
+/* Tarjeta genérica */
+.card{background:linear-gradient(180deg,#0f1530,#0e1430);border:1px solid #1b255a;box-shadow:0 10px 30px rgba(0,0,0,.35);border-radius:18px;padding:18px}
+
+/* Controles ranking */
+.controls{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
+label{font-size:12px;color:#cbd4ffb0;display:block;margin-bottom:6px}
+input,select,button{width:100%;padding:10px 12px;border-radius:12px;border:1px solid #28337a;background:#0d1330;color:var(--text);outline:none}
+input::placeholder{color:#b8c3ff60}
+button{background:linear-gradient(180deg,#5b7cff,#4f6be0);border:none;font-weight:600;cursor:pointer}
+button:disabled{opacity:.6;cursor:not-allowed}
+
+/* Tabla */
+table{width:100%;border-collapse:collapse;overflow:hidden;border-radius:14px}
+thead th{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#b8c3ff;position:sticky;top:0;background:#0f1535;padding:12px;border-bottom:1px solid #24307a}
+tbody td{padding:12px;border-bottom:1px dashed #1b245d}
+tbody tr:hover{background:#0f153a}
+.pill{display:inline-block;padding:4px 10px;border-radius:999px;border:1px solid #2a3aa2;background:#0c1240;color:#cfe0ff;font-size:12px}
+.right{text-align:right}
+.muted{color:#cbd4ff80}
+.footer{display:flex;justify-content:space-between;align-items:center;margin-top:12px;color:#cbd4ff80;font-size:13px}
+
+/* Arcade */
+.games{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+@media (min-width:900px){ .games{grid-template-columns:repeat(3,minmax(0,1fr));} }
+.game{display:flex;flex-direction:column;gap:10px;padding:14px;border:1px solid #28337a;background:#0d1330;border-radius:16px}
+.game-header{display:flex;gap:12px;align-items:center}
+.game-emoji{font-size:28px;line-height:1}
+.game-title{margin:0;font-weight:800}
+.game-desc{margin:0;color:#cbd4ffb0;font-size:14px}
+.game-actions{display:flex;gap:8px}
+.btn-ghost{background:#0d1330;border:1px solid #2a3aa2}
+
+/* Leaderboards */
+.boards{ display:grid; gap:14px; grid-template-columns:repeat(1,minmax(0,1fr)); }
+@media (min-width:900px){ .boards{ grid-template-columns:repeat(3,minmax(0,1fr)); } }
+.board{ background:#0d1330; border:1px solid #28337a; border-radius:16px; padding:12px }
+.board h4{ margin:0 0 8px; display:flex; align-items:center; gap:8px }
+.board table{ width:100%; border-collapse:collapse; font-size:14px }
+.board th,.board td{ padding:8px 6px; border-bottom:1px dashed #1b245d }
+.board th{ color:#b8c3ff; text-align:left; font-size:12px; text-transform:uppercase; letter-spacing:.05em }
+.board td.right{ text-align:right }
+.badge{ display:inline-block; min-width:26px; text-align:center; padding:2px 6px; border-radius:999px; background:#0c1240; border:1px solid #2a3aa2; color:#cfe0ff; font-size:12px }
+.empty{ color:#cbd4ff80; font-size:13px; padding:2px 0 8px }
+
+/* Modal Record */
+#record-overlay{
+  position:fixed; inset:0;
+  display:none;
+  align-items:center; justify-content:center;
+  background:rgba(0,0,0,.55);
+  z-index:10000; /* por encima del #game-modal (9999) */
+}
+#record-overlay.open{ display:flex; }
+
+#record-dialog{
+  width:min(480px,92vw);
+  background:#0f172a; color:#e5e7eb;
+  border:1px solid #233; border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.5);
+  padding:18px; font-family:system-ui,sans-serif;
+}
+#record-dialog h4{ margin:0 0 12px; font-size:18px; }
+#record-dialog .row{ display:grid; gap:6px; margin:10px 0; }
+#record-dialog label{ font-size:12px; color:#cbd4ffb0; }
+#record-dialog input{
+  background:#0b1022; color:#e5e7eb;
+  border:1px solid #334155; border-radius:8px;
+  padding:10px 12px; outline:none;
+}
+#record-dialog input:focus{ border-color:#64748b; }
+#record-dialog .actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px; }
+
+/* Modal Game */
+#game-modal{
+  position:fixed; inset:0; background:rgba(0,0,0,.82); z-index:9999;
+  display:none; align-items:center; justify-content:center; padding:16px;
+  pointer-events:none;
+}
+#game-modal.open{ display:flex; pointer-events:auto; }

@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>GameSales · Ranking & Arcade</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="title">GameSales</h1>
+    <p class="subtitle">Explora el <strong>ranking de ventas</strong>… o pasa al <strong>arcade</strong> y juega clásicos.</p>
+
+    <!-- Switcher -->
+    <div class="switcher">
+      <button id="btn-ventas" class="tab active">VENTAS</button>
+      <button id="btn-arcade" class="tab">ARCADE</button>
+    </div>
+
+    <!-- ======= sección VENTAS ======= -->
+    <section id="ventas-section" class="card">
+      <div class="controls">
+        <div>
+          <label>Año</label>
+          <input id="year" type="number" placeholder="e.g. 2010" />
+        </div>
+        <div>
+          <label>Plataforma</label>
+          <input id="platform" type="text" placeholder="e.g. Wii, PS4, X360…" />
+        </div>
+        <div>
+          <label>Límite</label>
+          <select id="limit">
+            <option>10</option><option selected>20</option><option>50</option><option>100</option>
+          </select>
+        </div>
+        <div style="display:flex;gap:8px;align-items:end">
+          <button id="search">Buscar</button>
+          <button id="reset" class="btn-ghost">Limpiar</button>
+        </div>
+      </div>
+
+      <div id="status" class="muted" style="padding:6px 2px">Cargando…</div>
+
+      <div style="overflow:auto;border:1px solid #1b255a;border-radius:14px">
+        <table id="table">
+          <thead>
+            <tr>
+              <th style="width:72px">#</th>
+              <th>Juego</th>
+              <th>Plataforma</th>
+              <th class="right">Año</th>
+              <th class="right">Ventas globales</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <div class="footer">
+        <span id="count" class="muted">—</span>
+        <span class="muted">Tip: haz clic en “Buscar” para aplicar filtros.</span>
+      </div>
+    </section>
+
+    <!-- ======= sección ARCADE ======= -->
+    <section id="arcade-section" class="card" style="display:none">
+    <h2 class="title" style="margin:0 0 12px">Arcade</h2>
+    <p class="subtitle" style="margin-bottom:16px">Elige un juego y juega dentro de la web.</p>
+
+    <div id="games" class="games"></div>
+
+    <h3 class="title" style="margin:22px 0 10px">Récords</h3>
+
+    <div class="controls" style="grid-template-columns:repeat(4,minmax(0,1fr))">
+      <div>
+        <label>Juego</label>
+        <select id="lb-game">
+          <option value="pacman" selected>Pac-Man</option>
+          <option value="2048">2048</option>
+          <option value="tetris">Tetris</option>
+        </select>
+      </div>
+      <div>
+        <label>Límite</label>
+        <select id="lb-limit">
+          <option>5</option><option selected>10</option><option>20</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:8px;align-items:end">
+        <button id="lb-search" type="button">Buscar</button>
+        <button id="lb-reset" class="btn-ghost" type="button">Limpiar</button>
+      </div>
+    </div>
+
+    <div id="lb-status" class="muted" style="padding:6px 2px"></div>
+
+    <div style="overflow:auto;border:1px solid #1b255a;border-radius:14px">
+      <table id="lb-table">
+        <thead>
+          <tr>
+            <th style="width:72px">#</th>
+            <th>Juego</th>
+            <th>Jugador</th>
+            <th class="right">Récord</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="footer">
+      <span id="lb-count" class="muted">—</span>
+      <span class="muted">Tip: usa los filtros y pulsa “Buscar”.</span>
+    </div>
+  </section>
+  </div>
+
+  <!-- Overlay para añadir record -->
+  <div id="record-overlay" aria-hidden="true">
+    <div id="record-dialog" role="dialog" aria-modal="true" aria-labelledby="record-title">
+      <h4 id="record-title">Guardar récord</h4>
+
+      <div class="row">
+        <label for="rec-nombre">Nombre</label>
+        <input id="rec-nombre" type="text" placeholder="Tu nombre">
+      </div>
+
+      <div class="row">
+        <label for="rec-score">Record</label>
+        <input id="rec-score" type="number" inputmode="numeric" placeholder="Puntos">
+      </div>
+
+      <div class="actions">
+        <button id="rec-save" type="button">Guardar</button>
+        <button id="rec-close" class="btn-ghost" type="button">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Juego (inicialmente oculto) -->
+  <div id="game-modal">
+    <div style="width:min(100%,980px);height:min(85vh,800px);background:#0f1530;border:1px solid #1b255a;border-radius:16px;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border-bottom:1px solid #1b255a">
+        <strong id="game-title" style="color:#cfe0ff">Juego</strong>
+        <div style="display:flex;gap:8px">
+          <button id="game-record" class="btn-ghost">Añadir Record</button>
+          <button id="game-open" class="btn-ghost">Abrir en pestaña</button>
+          <button id="game-close" class="btn-ghost">Cerrar</button>
+        </div>
+      </div>
+      <iframe id="game-frame" src="" style="flex:1;border:0;display:block;background:#000"></iframe>
+    </div>
+  </div>
+
+  <script src="app.client.js" defer> </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mongo-init-scripts
+  namespace: arcade
+data:
+  02-create-app-user.js: |
+    const APP_USER = process.env.APP_USER;
+    const APP_PWD  = process.env.APP_PWD;
+
+    const roles = [
+      { role: 'readWrite', db: 'appdb' },
+      { role: 'readWrite', db: 'scoresdb' }
+    ];
+
+    const admin = db.getSiblingDB('admin');
+    const info = admin.runCommand({ usersInfo: { user: APP_USER, db: 'admin' } });
+
+    if (!info.users || info.users.length === 0) {
+      print(`>>> Creando usuario '${APP_USER}' en 'admin' con roles en appdb y scoresdb...`);
+      admin.createUser({ user: APP_USER, pwd: APP_PWD, roles });
+    } 
+    else {
+      print(`>>> Usuario '${APP_USER}' ya existe en 'admin'; actualizando roles/contraseña...`);
+      admin.updateUser(APP_USER, { pwd: APP_PWD, roles });
+    }

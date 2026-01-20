@@ -4,7 +4,7 @@ metadata:
   name: as-proyecto
   description: Servicio principal del proyecto AS_Proyecto
   annotations:
-    github.com/project-slug: andonigarcia240/AS_Proyecto
+    github.com/project-slug: andonigarcia240/BackstageDemo_ASProyecto
     backstage.io/techdocs-ref: dir:.
     backstage.io/kubernetes-id: as-proyecto
 spec:

@@ -1,19 +1,220 @@
 openapi: 3.0.3
 info:
-  title: Demo API Backstage
+  title: AS_Proyecto API
   version: "1.0.0"
+  description: API de ranking y leaderboard + proxy a juegos
+
+servers:
+  - url: http://localhost:3000
+    description: Local (ajusta según despliegue)
+
 paths:
-  /ping:
+  /ranking:
     get:
-      summary: Ping
+      summary: Ranking de videojuegos por ventas globales
+      description: Devuelve una lista ordenada por Global_Sales descendente.
+      parameters:
+        - name: year
+          in: query
+          required: false
+          schema:
+            type: integer
+          example: 2013
+        - name: platform
+          in: query
+          required: false
+          schema:
+            type: string
+          example: PS4
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+            minimum: 1
+            maximum: 200
+          example: 20
       responses:
         "200":
-          description: OK
+          description: Lista de juegos
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  status:
-                    type: string
-                    example: ok
+                type: array
+                items:
+                  $ref: "#/components/schemas/RankingItem"
+
+  /leaderboard:
+    get:
+      summary: Leaderboard de puntuaciones
+      description: Devuelve puntuaciones ordenadas por Score desc y fecha asc.
+      parameters:
+        - name: game
+          in: query
+          required: false
+          schema:
+            type: string
+          example: pacman
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            minimum: 1
+            maximum: 200
+          example: 10
+      responses:
+        "200":
+          description: Lista de scores
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ScoreItem"
+
+  /record:
+    post:
+      summary: Registrar un récord
+      description: Inserta un score en MongoDB y lo añade al CSV.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecordRequest"
+            examples:
+              ejemplo:
+                value:
+                  game: pacman
+                  player: Andoni
+                  score: 12345
+      responses:
+        "201":
+          description: Récord guardado
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RecordResponse"
+        "400":
+          description: Validación fallida
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                game_requerido:
+                  value: { error: "game requerido" }
+                player_requerido:
+                  value: { error: "player requerido" }
+                score_invalido:
+                  value: { error: "score inválido" }
+        "500":
+          description: Error interno al guardar
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              examples:
+                fallo:
+                  value: { error: "Fallo guardando el récord" }
+
+  /pacman:
+    get:
+      summary: Proxy a Pacman (UI/recursos del juego)
+      description: Redirige hacia el contenedor del juego Pacman.
+      responses:
+        "200":
+          description: Contenido del juego (HTML/recursos)
+
+  /juego-2048:
+    get:
+      summary: Proxy a 2048 (UI/recursos del juego)
+      description: Redirige hacia el contenedor del juego 2048.
+      responses:
+        "200":
+          description: Contenido del juego (HTML/recursos)
+
+  /tetris:
+    get:
+      summary: Proxy a Tetris (UI/recursos del juego)
+      description: Redirige hacia el contenedor del juego Tetris.
+      responses:
+        "200":
+          description: Contenido del juego (HTML/recursos)
+
+components:
+  schemas:
+    RankingItem:
+      type: object
+      additionalProperties: false
+      properties:
+        Name:
+          type: string
+          example: "Wii Sports"
+        Platform:
+          type: string
+          example: "Wii"
+        Year:
+          type: integer
+          example: 2006
+        Global_Sales:
+          type: number
+          format: float
+          example: 82.74
+
+    ScoreItem:
+      type: object
+      additionalProperties: false
+      properties:
+        Game:
+          type: string
+          example: "pacman"
+        Player:
+          type: string
+          example: "Andoni"
+        Score:
+          type: integer
+          example: 12345
+        CreatedAt:
+          type: string
+          format: date-time
+          example: "2026-01-20T10:15:30.000Z"
+
+    RecordRequest:
+      type: object
+      required: [game, player, score]
+      properties:
+        game:
+          type: string
+          example: "pacman"
+        player:
+          type: string
+          example: "Andoni"
+        score:
+          type: integer
+          minimum: 0
+          example: 12345
+
+    RecordResponse:
+      type: object
+      properties:
+        ok:
+          type: boolean
+          example: true
+        score:
+          type: object
+          properties:
+            Game: { type: string, example: "pacman" }
+            Player: { type: string, example: "Andoni" }
+            Score: { type: integer, example: 12345 }
+            CreatedAt: { type: string, format: date-time }
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "score inválido"

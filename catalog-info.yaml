@@ -7,6 +7,7 @@ metadata:
     github.com/project-slug: andonigarcia240/BackstageDemo_ASProyecto
     backstage.io/techdocs-ref: dir:.
     backstage.io/kubernetes-id: as-proyecto
+    backstage.io/techdocs-branch: main
 spec:
   type: service
   lifecycle: experimental

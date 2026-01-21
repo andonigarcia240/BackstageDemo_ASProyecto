@@ -8,6 +8,7 @@ metadata:
     backstage.io/techdocs-ref: dir:.
     backstage.io/kubernetes-id: as-proyecto
     backstage.io/techdocs-branch: main
+    backstage.io/source-location: url:https://github.com/andonigarcia240/BackstageDemo_ASProyecto/tree/main
 spec:
   type: service
   lifecycle: experimental

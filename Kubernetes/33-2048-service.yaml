@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: juego-2048
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   type: ClusterIP
   selector:
     app: juego-2048
+    backstage.io/kubernetes-id: as-proyecto
   ports:
     - port: 80
       targetPort: 80

@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: arcade-loadbalancer
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   type: LoadBalancer
   selector:
-    app: servidor-web            
+    app: servidor-web  
+    backstage.io/kubernetes-id: as-proyecto          
   ports:
     - name: servidor-web
       port: 3000             

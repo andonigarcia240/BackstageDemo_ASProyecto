@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: tetris
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   type: ClusterIP
   selector:
     app: tetris
+    backstage.io/kubernetes-id: as-proyecto
   ports:
     - port: 80
       targetPort: 80

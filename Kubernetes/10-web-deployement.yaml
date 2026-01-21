@@ -3,15 +3,19 @@ kind: Deployment
 metadata:
   name: servidor-web
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: servidor-web
+      backstage.io/kubernetes-id: as-proyecto
   template:
     metadata:
       labels:
         app: servidor-web
+        backstage.io/kubernetes-id: as-proyecto
     spec:
       initContainers:
         - name: wait-for-mongo

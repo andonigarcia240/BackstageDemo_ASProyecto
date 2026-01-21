@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: pacman
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   type: ClusterIP
   selector:
     app: pacman
+    backstage.io/kubernetes-id: as-proyecto
   ports:
     - port: 80
       targetPort: 80

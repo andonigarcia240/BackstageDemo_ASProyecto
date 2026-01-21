@@ -3,15 +3,19 @@ kind: Deployment
 metadata:
   name: pacman
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: pacman
+      backstage.io/kubernetes-id: as-proyecto
   template:
     metadata:
       labels:
         app: pacman
+        backstage.io/kubernetes-id: as-proyecto
     spec:
       containers:
         - name: pacman

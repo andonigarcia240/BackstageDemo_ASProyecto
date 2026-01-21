@@ -3,15 +3,19 @@ kind: Deployment
 metadata:
   name: servidor-bbdd
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: servidor-bbdd
+      backstage.io/kubernetes-id: as-proyecto
   template:
     metadata:
       labels:
         app: servidor-bbdd
+        backstage.io/kubernetes-id: as-proyecto
     spec:
       containers:
         - name: mongo

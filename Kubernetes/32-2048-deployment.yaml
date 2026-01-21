@@ -3,15 +3,19 @@ kind: Deployment
 metadata:
   name: juego-2048
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: juego-2048
+      backstage.io/kubernetes-id: as-proyecto
   template:
     metadata:
       labels:
         app: juego-2048
+        backstage.io/kubernetes-id: as-proyecto
     spec:
       containers:
         - name: juego-2048

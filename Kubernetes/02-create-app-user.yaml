@@ -3,6 +3,8 @@ kind: ConfigMap
 metadata:
   name: mongo-init-scripts
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 data:
   02-create-app-user.js: |
     const APP_USER = process.env.APP_USER;

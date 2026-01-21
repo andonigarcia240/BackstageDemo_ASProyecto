@@ -3,15 +3,19 @@ kind: Deployment
 metadata:
   name: tetris
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: tetris
+      backstage.io/kubernetes-id: as-proyecto
   template:
     metadata:
       labels:
         app: tetris
+        backstage.io/kubernetes-id: as-proyecto
     spec:
       containers:
         - name: tetris

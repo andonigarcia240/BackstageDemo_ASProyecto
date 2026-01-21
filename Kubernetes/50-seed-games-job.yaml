@@ -3,6 +3,8 @@ kind: Job
 metadata:
   name: seed-games
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   ttlSecondsAfterFinished: 3600
   backoffLimit: 0

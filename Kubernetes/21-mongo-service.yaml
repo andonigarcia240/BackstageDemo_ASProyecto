@@ -3,9 +3,12 @@ kind: Service
 metadata:
   name: servidor-bbdd
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   selector:
     app: servidor-bbdd
+    backstage.io/kubernetes-id: as-proyecto
   ports:
     - name: mongo
       port: 27017

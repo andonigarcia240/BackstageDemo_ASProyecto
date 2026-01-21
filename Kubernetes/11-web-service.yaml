@@ -3,9 +3,12 @@ kind: Service
 metadata:
   name: servidor-web
   namespace: arcade
+  labels:
+    backstage.io/kubernetes-id: as-proyecto
 spec:
   selector:
     app: servidor-web
+    backstage.io/kubernetes-id: as-proyecto
   ports:
     - port: 3000
       targetPort: 3000

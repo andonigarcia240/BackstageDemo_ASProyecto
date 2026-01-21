@@ -4,6 +4,9 @@ import fs from 'node:fs/promises';
 import { MongoClient} from 'mongodb';
 import csvWriterPkg from 'csv-writer';
 import { createProxyMiddleware } from 'http-proxy-middleware';
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
+
 
 const { createObjectCsvWriter } = csvWriterPkg;
 const app = express();
@@ -20,6 +23,19 @@ let dbScores;
 
 app.use(express.static("public"));
 app.use(express.json());
+
+const swaggerSpec = swaggerJSDoc({
+  definition: {
+    openapi: "3.0.3",
+    info: { title: "AS_Proyecto API", version: "1.0.0" },
+    servers: [{ url: "http://localhost:3001", description: "Local API" }],
+  },
+  apis: ["./app.js"], 
+});
+
+app.get("/openapi.json", (_req, res) => res.json(swaggerSpec));
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // Expone cada juego bajo un subpath y reenvía la petición  (solución para el problema de obtener score :) )
 app.use('/pacman',     createProxyMiddleware({ target: 'http://pacman:80',     changeOrigin:true, pathRewrite:{'^/pacman':'/'} }));
@@ -51,6 +67,44 @@ const writer = createObjectCsvWriter({
 });
 
 // ========== RANKING ==========
+/** 
+@openapi
+*  /ranking:
+*    get:
+*      summary: Ranking de videojuegos por ventas globales
+*      description: Devuelve una lista ordenada por Global_Sales descendente.
+*      parameters:
+*        - name: year
+*          in: query
+*          required: false
+*          schema:
+*            type: integer
+*          example: 2013
+*        - name: platform
+*          in: query
+*          required: false
+*          schema:
+*            type: string
+*          example: PS4
+*        - name: limit
+*          in: query
+*          required: false
+*          schema:
+*            type: integer
+*            default: 20
+*            minimum: 1
+*            maximum: 200
+*          example: 20
+*      responses:
+*        "200":
+*          description: Lista de juegos
+*          content:
+*            application/json:
+*              schema:
+*                type: array
+*                items:
+*                  $ref: "#/components/schemas/RankingItem"
+*/
 app.get('/ranking', async (req, res) => {
   const { year, platform, limit = 20 } = req.query;
   const q = {};
@@ -67,6 +121,38 @@ app.get('/ranking', async (req, res) => {
 });
 
 // ========== LEADERBOARD ==========
+/**
+ @openapi
+ * /leaderboard:
+ *   get:
+ *     summary: Leaderboard de puntuaciones
+ *     description: Devuelve puntuaciones ordenadas por Score desc y fecha asc.
+ *     parameters:
+ *       - name: game
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: string
+ *         example: pacman
+ *       - name: limit
+ *         in: query
+ *         required: false
+ *         schema:
+ *           type: integer
+ *           default: 10
+ *           minimum: 1
+ *           maximum: 200
+ *         example: 10
+ *     responses:
+ *       "200":
+ *         description: Lista de scores
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: "#/components/schemas/ScoreItem"
+*/
 app.get('/leaderboard', async (req, res) => {
   const { game, limit = 10 } = req.query;
   const q = {};
@@ -82,6 +168,54 @@ app.get('/leaderboard', async (req, res) => {
 });
 
 // ========== RECORD ==========
+/**
+ @openapi
+ * /record:
+  *  post:
+  *    summary: Registrar un récord
+  *    description: Inserta un score en MongoDB y lo añade al CSV.
+  *    requestBody:
+  *      required: true
+  *      content:
+  *        application/json:
+  *          schema:
+  *            $ref: "#/components/schemas/RecordRequest"
+  *          examples:
+  *            ejemplo:
+  *              value:
+  *                game: pacman
+  *                player: Andoni
+  *                score: 12345
+  *    responses:
+  *      "201":
+  *        description: Récord guardado
+  *        content:
+  *          application/json:
+  *            schema:
+  *              $ref: "#/components/schemas/RecordResponse"
+  *      "400":
+  *        description: Validación fallida
+  *        content:
+  *          application/json:
+  *            schema:
+  *              $ref: "#/components/schemas/ErrorResponse"
+  *            examples:
+  *              game_requerido:
+  *                value: { error: "game requerido" }
+  *              player_requerido:
+  *                value: { error: "player requerido" }
+  *              score_invalido:
+  *                value: { error: "score inválido" }
+  *      "500":
+  *        description: Error interno al guardar
+  *        content:
+  *          application/json:
+  *            schema:
+  *              $ref: "#/components/schemas/ErrorResponse"
+  *            examples:
+  *              fallo:
+  *                value: { error: "Fallo guardando el récord" }
+ */
 app.post('/record', async (req, res) => {
   try {
     console.log('REQ BODY:', req.body); // <-- mira exactamente qué llega

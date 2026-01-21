@@ -25,4 +25,4 @@ spec:
   lifecycle: experimental
   owner: guest
   definition:
-    $text: ./openapi.yaml
+    $text: http://localhost:3001/openapi.json
